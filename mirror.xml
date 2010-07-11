@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<node name="/com/example/Mirror">
+ <interface name="com.example.Mirror">
+  <method name="Reflect">
+   <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+   <arg type="s" name="in" direction="in" />
+   <arg type="s" name="out" direction="out" />
+  </method>
+ </interface>
+</node>
+
