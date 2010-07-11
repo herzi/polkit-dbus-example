@@ -6,6 +6,8 @@
 
 #include "mirror-client-glue.h"
 
+#include <glib/gi18n.h>
+
 GtkWidget *error_label;
 
 DBusGProxy *proxy = NULL;
@@ -17,8 +19,15 @@ handle_reply (DBusGProxy * proxy,
               gpointer     entry)
 {
     if (error) {
+        gchar* msg = g_strdup_printf (_("Error contacting the mirror service: %s:%d:%s%c%s"),
+                                      g_quark_to_string (error->domain),
+                                      error->code,
+                                      error->message,
+                                      g_error_matches (error, DBUS_GERROR, DBUS_GERROR_REMOTE_EXCEPTION) ? ':' : '\0',
+                                      g_error_matches (error, DBUS_GERROR, DBUS_GERROR_REMOTE_EXCEPTION) ? dbus_g_error_get_name (error) : "");
         gtk_label_set_text (GTK_LABEL (error_label),
-                            error->message);
+                            msg);
+        g_free (msg);
         /* FIXME: free the error? */
     } else {
         gtk_label_set(GTK_LABEL(error_label), "");

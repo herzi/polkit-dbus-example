@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.example.Mirror
+Exec=/usr/libexec/mirror-server
+User=root

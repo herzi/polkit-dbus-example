@@ -2,6 +2,8 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <polkit/polkit.h>
 
+#include <syslog.h>
+
 #include "mirror.h"
 #include "mirror-server-glue.h"
 
@@ -56,6 +58,13 @@ mirror_reflect(Mirror *mirror, const gchar *name, DBusGMethodInvocation *context
 }
 
 
+static void
+syserr (gchar const* message)
+{
+    syslog (LOG_WARNING, message);
+}
+
+
 int main(int argc, char **argv)
 {
     GError *error = NULL;
@@ -65,13 +74,19 @@ int main(int argc, char **argv)
     GMainLoop *loop;
     int result;
 
+    openlog (argv[0], 0, LOG_DAEMON);
+
+    g_set_printerr_handler (syserr);
+
+    g_printerr ("%s started\n", argv[0]);
+
     /* Initialise GLib */
     g_type_init();
     
     /* Connect to the system D-Bus */
     connection = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
     if (error) {
-        printf("Failed to get bus: %s\n", error->message);
+        g_printerr ("Failed to get bus: %s\n", error->message);
         return 1;
     }
     
@@ -80,11 +95,11 @@ int main(int argc, char **argv)
     result = dbus_bus_request_name(dbus_g_connection_get_connection(connection),
                                     "com.example.Mirror", DBUS_NAME_FLAG_DO_NOT_QUEUE, &dbus_error);
     if (dbus_error_is_set(&dbus_error)) {
-        printf("Failed to register name: %s\n", dbus_error.message);
+        g_printerr ("Failed to register name: %s\n", dbus_error.message);
         return 1;
     }
     if (result != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER) {
-        printf("Unable to get bus name\n");
+        g_printerr ("Unable to get bus name\n");
         return 1;
     }
     
