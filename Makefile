@@ -6,7 +6,7 @@ server:
 
 client:
 	dbus-binding-tool --mode=glib-client --prefix=mirror mirror.xml > mirror-client-glue.h
-	gcc -g -Wall `pkg-config --cflags --libs gtk+-2.0 dbus-glib-1 polkit-dbus` mirror-client.c -o mirror-client
+	gcc -g -Wall `pkg-config --cflags --libs gtk+-2.0 dbus-glib-1` mirror-client.c -o mirror-client
 
 install:
 	sudo cp mirror.conf /etc/dbus-1/system.d

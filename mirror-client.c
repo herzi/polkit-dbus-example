@@ -2,7 +2,9 @@
 #include <unistd.h>
 #include <gtk/gtk.h>
 #include <dbus/dbus.h>
+#if 0
 #include <polkit-dbus/polkit-dbus.h>
+#endif
 
 #include "mirror-client-glue.h"
 
@@ -29,7 +31,7 @@ mirror_cb(GtkWidget *entry)
     gtk_entry_set_text(GTK_ENTRY(entry), result);
 }
 
-
+#if 0
 static void
 authorize_cb(GtkWidget *button)
 {   
@@ -67,7 +69,7 @@ authorize_cb(GtkWidget *button)
     if(authorized)
         gtk_widget_set_sensitive(button, FALSE);
 }
-
+#endif
 
 int main(int argc, char **argv)
 {
@@ -103,9 +105,11 @@ int main(int argc, char **argv)
     gtk_label_set_line_wrap(GTK_LABEL(error_label), TRUE);
     gtk_box_pack_start(GTK_BOX(vbox), error_label, FALSE, TRUE, 3);
 
+#if 0
     button = gtk_button_new_with_label("Unlock");
     g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(authorize_cb), NULL);
     gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, TRUE, 3);
+#endif
 
     gtk_widget_show_all(window);
     
