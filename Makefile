@@ -7,7 +7,7 @@ mirror-server-glue.h: mirror.xml Makefile
 	dbus-binding-tool --mode=glib-server --prefix=mirror $< > $@
 
 mirror-client: mirror-client.c mirror-client-glue.h
-	gcc -g -Wall $(shell pkg-config --cflags --libs gtk+-2.0 dbus-glib-1) $< -o $@
+	gcc -g -Wall $(shell pkg-config --cflags --libs gtk+-2.0 dbus-glib-1 polkit-gtk-1) $< -o $@
 
 mirror-client-glue.h: mirror.xml Makefile
 	dbus-binding-tool --mode=glib-client --prefix=mirror $< > $@
