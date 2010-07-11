@@ -1,13 +1,17 @@
-all: server client
+all: mirror-server mirror-client
 
-server:
-	dbus-binding-tool --mode=glib-server --prefix=mirror mirror.xml > mirror-server-glue.h
-	gcc -g -Wall `pkg-config --cflags --libs dbus-glib-1 polkit-gobject-1` mirror-server.c -o mirror-server
+mirror-server: mirror-server.c mirror-server-glue.h
+	gcc -g -Wall $(shell pkg-config --cflags --libs dbus-glib-1 polkit-gobject-1) $< -o $@
 
-client:
-	dbus-binding-tool --mode=glib-client --prefix=mirror mirror.xml > mirror-client-glue.h
-	gcc -g -Wall `pkg-config --cflags --libs gtk+-2.0 dbus-glib-1` mirror-client.c -o mirror-client
+mirror-server-glue.h: mirror.xml Makefile
+	dbus-binding-tool --mode=glib-server --prefix=mirror $< > $@
+
+mirror-client: mirror-client.c mirror-client-glue.h
+	gcc -g -Wall $(shell pkg-config --cflags --libs gtk+-2.0 dbus-glib-1) $< -o $@
+
+mirror-client-glue.h: mirror.xml Makefile
+	dbus-binding-tool --mode=glib-client --prefix=mirror $< > $@
 
 install:
-	sudo cp mirror.conf /etc/dbus-1/system.d
-	sudo cp mirror.policy /usr/share/polkit-1/actions
+	install -m644 mirror.conf $(DESTDIR)/etc/dbus-1/system.d
+	install -m644 mirror.policy $(DESTDIR)/usr/share/polkit-1/actions
