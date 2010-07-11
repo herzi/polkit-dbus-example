@@ -15,3 +15,6 @@ mirror-client-glue.h: mirror.xml Makefile
 install:
 	install -m644 mirror.conf $(DESTDIR)/etc/dbus-1/system.d
 	install -m644 mirror.policy $(DESTDIR)/usr/share/polkit-1/actions
+
+clean:
+	rm -rf mirror-server mirror-client mirror-server-glue.h mirror-client-glue.h
