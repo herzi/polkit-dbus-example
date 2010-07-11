@@ -37,6 +37,19 @@ mirror_cb(GtkWidget *entry)
 }
 
 
+static void authorized_changed (PolkitLockButton* button,
+                                GtkWidget       * entry)
+{
+    if (polkit_lock_button_get_is_authorized (button)) {
+        gtk_widget_set_sensitive (entry, TRUE);
+    } else {
+        gtk_widget_set_sensitive (entry,
+                                  polkit_lock_button_get_can_obtain (button) &&
+                                  !polkit_lock_button_get_is_visible (button));
+    }
+}
+
+
 int main(int argc, char **argv)
 {
     DBusGConnection *connection;    
@@ -77,6 +90,9 @@ int main(int argc, char **argv)
     polkit_lock_button_set_lock_down_text (POLKIT_LOCK_BUTTON (button), "foo");
     polkit_lock_button_set_not_authorized_text (POLKIT_LOCK_BUTTON (button), "bar");
     gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, TRUE, 3);
+
+    g_signal_connect (button, "changed",
+                      G_CALLBACK (authorized_changed), entry);
 
     g_print ("%s\n", polkit_lock_button_get_is_visible (POLKIT_LOCK_BUTTON (button)) ? "visible" : "invisible");
 
